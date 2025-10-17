@@ -1,117 +1,103 @@
-# Project Requirements Document: codeguide-starter
-
----
+# Project Requirements Document (PRD)
 
 ## 1. Project Overview
 
-The **codeguide-starter** project is a boilerplate web application that provides a ready-made foundation for any web project requiring secure user authentication and a post-login dashboard. It sets up the common building blocks—sign-up and sign-in pages, API routes to handle registration and login, and a simple dashboard interface driven by static data. By delivering this skeleton, it accelerates development time and ensures best practices are in place from day one.
+The **aviba-app (codeguide-starter-fullstack)** is a pre-configured full-stack web application starter template built on Next.js 15. It offers out-of-the-box user authentication, a protected dashboard, modern UI components, dark-mode theming, and a containerized PostgreSQL setup. By bundling these core building blocks, it dramatically reduces the time and effort required to kick off new web projects that need secure user accounts, a data-driven interface, and a production-ready environment.
 
-This starter kit is being built to solve the friction developers face when setting up repeated common tasks: credential handling, session management, page routing, and theming. Key objectives include: 1) delivering a fully working authentication flow (registration & login), 2) providing a gated dashboard area upon successful login, 3) establishing a clear, maintainable project structure using Next.js and TypeScript, and 4) demonstrating a clean theming approach with global and section-specific CSS. Success is measured by having an end-to-end login journey in under 200 lines of code and zero runtime type errors.
+This template exists to solve the common problem of spending weeks on boilerplate: setting up auth, database connections, theming, and deployment scaffolding. Its key objectives are:
 
----
+- Provide a secure, type-safe authentication system backed by Better Auth and Drizzle ORM.
+- Showcase a protected dashboard layout that developers can extend with real data.
+- Deliver a polished, accessible UI built with shadcn/ui components and Tailwind CSS.
+- Enable dark mode out of the box, respecting system preferences and user toggles.
+- Offer Docker support for PostgreSQL and best practices (ESLint, Prettier) for code quality and deployment readiness (e.g., Vercel).
+
+Success criteria include:
+
+- A developer can clone the repo, run `docker-compose up` and `npm run dev`, and have a working auth + dashboard in under five minutes.
+- Authentication flows (sign-up, sign-in, protected routes) work correctly, with type safety enforced by TypeScript and Drizzle.
+- UI components render consistently in light and dark modes, passing basic accessibility checks.
+- The project passes linting and formatting rules without manual fixes.
 
 ## 2. In-Scope vs. Out-of-Scope
 
-### In-Scope (Version 1)
-- User registration (sign-up) form with validation
-- User login (sign-in) form with validation
-- Next.js API routes under `/api/auth/route.ts` handling:
-  - Credential validation
-  - Password hashing (e.g., bcrypt)
-  - Session creation or JWT issuance
-- Protected dashboard pages under `/dashboard`:
-  - `layout.tsx` wrapping dashboard content
-  - `page.tsx` rendering static data from `data.json`
-- Global application layout in `/app/layout.tsx`
-- Basic styling via `globals.css` and `dashboard/theme.css`
-- TypeScript strict mode enabled
+### In-Scope (First Version)
 
-### Out-of-Scope (Later Phases)
-- Integration with a real database (PostgreSQL, MongoDB, etc.)
-- Advanced authentication flows (password reset, email verification, MFA)
-- Role-based access control (RBAC)
-- Multi-tenant or white-label theming
-- Unit, integration, or end-to-end testing suites
-- CI/CD pipeline and production deployment scripts
+- Email/password user registration and login via Better Auth.
+- Protected `/dashboard` route only accessible to authenticated users.
+- Static dashboard content pulled from a local `data.json` file.
+- UI built with shadcn/ui components, styled by Tailwind CSS v4.
+- Dark mode support via `next-themes`, with auto-detect and manual toggle.
+- Type-safe database schema for users and sessions using Drizzle ORM.
+- Local database provisioning via Docker Compose with PostgreSQL.
+- Code quality enforcement using ESLint and Prettier configurations.
+- Deployment-ready configuration for platforms like Vercel.
 
----
+### Out-of-Scope (Planned for Future Phases)
+
+- Dynamic, database-driven dashboard data queries and mutations.
+- Password reset and email verification flows.
+- Social/OAuth logins (e.g., Google, GitHub).
+- Comprehensive logging, metrics, and monitoring integration.
+- Automated testing (unit, integration, end-to-end).
+- CI/CD pipeline setup (e.g., GitHub Actions).
+- Advanced caching or performance optimizations beyond Next.js defaults.
+- Internationalization (i18n) support.
 
 ## 3. User Flow
 
-A new visitor lands on the root URL and sees a welcome page with options to **Sign Up** or **Sign In**. If they choose Sign Up, they fill in their email, password, and hit “Create Account.” The form submits to `/api/auth/route.ts`, which hashes the password, creates a new user session or token, and redirects them to the dashboard. If any input is invalid, an inline error message explains the issue (e.g., “Password too short”).
+When a new visitor arrives, they land on the public homepage. From there, they see clear navigation links for **Sign Up** and **Sign In**. Clicking **Sign Up** brings up a form where they enter email and password. On successful registration, the user is automatically logged in and redirected to the **Dashboard**.
 
-Once authenticated, the user is taken to the `/dashboard` route. Here they see a sidebar or header defined by `dashboard/layout.tsx`, and the main panel pulls in static data from `data.json`. They can log out (if that control is present), but otherwise their entire session is managed by server-side cookies or tokens. Returning users go directly to Sign In, submit credentials, and upon success they land back on `/dashboard`. Any unauthorized access to `/dashboard` redirects back to Sign In.
-
----
+Authenticated users land on a layout that includes a **Site Header** (with logo and theme toggle) and a left **Sidebar** for navigation. The main content area shows dashboard cards, charts, and tables sourced from `data.json`. Users can switch between light and dark themes via the toggle in the header, and they can sign out using a button in the header or sidebar. If an unauthenticated user tries to access `/dashboard`, they are redirected to **Sign In**, preserving the intended destination.
 
 ## 4. Core Features
 
-- **Sign-Up Page (`/app/sign-up/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Sign-In Page (`/app/sign-in/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Authentication API (`/app/api/auth/route.ts`)**: Handles both registration and login based on HTTP method, integrates password hashing (bcrypt) and session or JWT logic.
-- **Global Layout (`/app/layout.tsx` + `globals.css`)**: Shared header, footer, and CSS resets across all pages.
-- **Dashboard Layout (`/app/dashboard/layout.tsx` + `dashboard/theme.css`)**: Sidebar or top nav for authenticated flows, section-specific styling.
-- **Dashboard Page (`/app/dashboard/page.tsx`)**: Reads `data.json`, renders it as cards or tables.
-- **Static Data Source (`/app/dashboard/data.json`)**: Example dataset to demo dynamic rendering.
-- **TypeScript Configuration**: `tsconfig.json` with strict mode and path aliases (if any).
-
----
+- **Authentication Module**: Email/password sign-up, sign-in, session management with Better Auth and Next.js API routes.
+- **Protected Routes**: Middleware or route guards to restrict access to authenticated users only.
+- **Dashboard Layout**: Pre-built dashboard page with static JSON data, illustrating cards (`section-cards.tsx`), interactive charts (`chart-area-interactive.tsx`), and data tables (`data-table.tsx`).
+- **UI Component Library**: shadcn/ui components (`button.tsx`, `input.tsx`, `dialog.tsx`, etc.) customized via Tailwind CSS.
+- **Theming & Dark Mode**: Automatic system theme detection plus manual toggle, powered by `next-themes` and CSS variables.
+- **Type-Safe Database**: Drizzle ORM schemas for `users` and `sessions`, with a centralized `db/index.ts` connection.
+- **Dockerized Database**: `docker-compose.yml` to spin up PostgreSQL locally.
+- **Code Quality Tools**: ESLint for linting, Prettier for formatting, TypeScript for type checking.
+- **Deployment Config**: Ready-for-use Next.js settings optimized for hosting platforms (e.g., Vercel).
 
 ## 5. Tech Stack & Tools
 
-- **Framework**: Next.js (App Router) for file-based routing, SSR/SSG, and API routes.
-- **Language**: TypeScript for type safety.
-- **UI Library**: React 18 for component-based UI.
-- **Styling**: Plain CSS via `globals.css` (global reset) and `theme.css` (sectional styling). Can easily migrate to CSS Modules or Tailwind in the future.
-- **Backend**: Node.js runtime provided by Next.js API routes.
-- **Password Hashing**: bcrypt (npm package).
-- **Session/JWT**: NextAuth.js or custom JWT logic (to be decided in implementation).
-- **IDE & Dev Tools**: VS Code with ESLint, Prettier extensions. Optionally, Cursor.ai for AI-assisted coding.
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui components, next-themes.
+- **Backend**: Next.js API Routes, Better Auth (self-hosted), Drizzle ORM, PostgreSQL.
+- **DevOps & Containers**: Docker & Docker Compose for local PostgreSQL, Vercel for production deploy.
+- **Code Quality**: ESLint, Prettier, TypeScript compiler.
+- **Potential IDE Integrations**: VS Code with TypeScript and Tailwind CSS IntelliSense, ESLint, Prettier plugins.
 
----
+_No AI models are integrated in this version._
 
 ## 6. Non-Functional Requirements
 
-- **Performance**: Initial page load under 200 ms on a standard broadband connection. API responses under 300 ms.
-- **Security**:
-  - HTTPS only in production.
-  - Proper CORS, CSRF protection for API routes.
-  - Secure password storage (bcrypt with salt).
-  - No credentials or secrets checked into version control.
-- **Scalability**: Structure must support adding database integration, caching layers, and advanced auth flows without rewiring core app.
-- **Usability**: Forms should give real-time feedback on invalid input. Layout must be responsive (mobile > 320 px).
-- **Maintainability**: Code must adhere to TypeScript strict mode. Linting & formatting enforced by ESLint/Prettier.
-
----
+- **Performance**: Initial page load time under 1 second on 3G; subsequent navigations via client-side transitions.
+- **Scalability**: Architecture supports horizontal scaling of Next.js instances; PostgreSQL can be hosted on managed service.
+- **Security**: All API endpoints accessible only over HTTPS; password storage via bcrypt (managed by Better Auth); CSRF protection via Next.js defaults; CORS disabled by default.
+- **Accessibility**: Aim for WCAG 2.1 AA compliance; use semantic HTML, focus management, and ARIA roles in shadcn/ui components.
+- **Usability**: Responsive design for mobile/desktop; intuitive sidebar navigation and theme toggle.
+- **Reliability**: 99.9% uptime target in production; automated health checks for database connection.
 
 ## 7. Constraints & Assumptions
 
-- **No Database**: Dashboard uses only `data.json`; real database integration is deferred.
-- **Node Version**: Requires Node.js >= 14.
-- **Next.js Version**: Built on Next.js 13+ App Router.
-- **Authentication**: Assumes availability of bcrypt or NextAuth.js at implementation time.
-- **Hosting**: Targets serverless or Node.js-capable hosting (e.g., Vercel, Netlify).
-- **Browser Support**: Modern evergreen browsers; no IE11 support required.
-
----
+- Requires Node.js v18+ and Docker installed for local development.
+- PostgreSQL version locked to the image in `docker-compose.yml` (e.g., 15.x).
+- Better Auth API must be available and configured via environment variables in `.env`.
+- Assumes developers are familiar with Next.js App Router conventions and TypeScript.
+- No legacy browser support beyond evergreen browsers.
 
 ## 8. Known Issues & Potential Pitfalls
 
-- **Static Data Limitation**: `data.json` is only for demo. A real API or database will be needed to avoid stale data.
-  *Mitigation*: Define a clear interface for data fetching so swapping to a live endpoint is trivial.
-
-- **Global CSS Conflicts**: Using global styles can lead to unintended overrides.
-  *Mitigation*: Plan to migrate to CSS Modules or utility-first CSS in Phase 2.
-
-- **API Route Ambiguity**: Single `/api/auth/route.ts` handling both sign-up and sign-in could get complex.
-  *Mitigation*: Clearly branch on HTTP method (`POST /register` vs. `POST /login`) or split into separate files.
-
-- **Lack of Testing**: No test suite means regressions can slip in.
-  *Mitigation*: Build a minimal Jest + React Testing Library setup in an early iteration.
-
-- **Error Handling Gaps**: Client and server must handle edge cases (network failures, malformed input).
-  *Mitigation*: Define a standard error response schema and show user-friendly messages.
+- **Static Data Source**: Dashboard uses a local JSON file. Forgetting to replace this with live queries could lead to stale displays. _Mitigation_: Create placeholder API routes and Drizzle queries early.
+- **API Route Growth**: As features grow, the `/app/api` folder may become cluttered. _Mitigation_: Plan subdirectories (e.g., `/api/users`, `/api/dashboard`).
+- **Schema Migrations**: Drizzle ORM requires manual migrations; forgetting migrations can break schema. _Mitigation_: Adopt a migration tool or script early (e.g., Drizzle Migrate).
+- **Docker Networking**: Misconfigured Docker host/port can block local dev. _Mitigation_: Document common fixes in `README.md`.
+- **Dark Mode Flicker**: If `next-themes` is not initialized properly, users may see a flash of the wrong theme. _Mitigation_: Follow `next-themes` SSR best practices and include `ThemeProvider` in root layout.
+- **Authentication Edge Cases**: Better Auth’s default error messages may be too generic. _Mitigation_: Catch and customize error responses in API routes.
 
 ---
 
-This PRD should serve as the single source of truth for the AI model or any developer generating the next set of technical documents: Tech Stack Doc, Frontend Guidelines, Backend Structure, App Flow, File Structure, and IDE Rules. It contains all functional and non-functional requirements with no ambiguity, enabling seamless downstream development.
+This PRD provides the definitive guide for all subsequent deliverables (Tech Stack Document, Frontend Guidelines, Backend Structure, App Flow, etc.). Every detail here is unambiguous, ensuring the AI and engineers can generate implementation specifics without needing further clarification.
