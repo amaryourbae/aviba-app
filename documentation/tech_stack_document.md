@@ -1,90 +1,105 @@
-# Tech Stack Document
+# Tech Stack for aviba-app
 
-This document explains the key technologies chosen for the **codeguide-starter** project. It’s written in everyday language so anyone—technical or not—can understand why each tool was picked and how it supports the application.
+This document explains, in everyday language, the main technologies we chose for the aviba-app full-stack starter template. It shows how each part fits together and why it makes development fast, reliable, and easy to extend—even for non-technical readers.
 
 ## 1. Frontend Technologies
-The frontend is everything the user sees and interacts with. For this project, we’ve used:
+These are the tools that build what you see and interact with in your web browser:
 
-- **Next.js (App Router)**
-  - A React framework that makes page routing, server-side rendering, and API routes very simple.
-  - Enhances user experience by pre-rendering pages on the server or at build time, leading to faster initial load.
-- **React 18**
-  - The underlying library for building user interfaces with reusable components.
-  - Provides a smooth, interactive experience thanks to its virtual DOM and modern hooks.
+- **Next.js 15 (App Router)**
+  • A framework that handles page routing, server-side rendering, and building both pages and API endpoints.
+  • Gives us a fast, SEO-friendly site that can load some parts on the server and some in the browser.
+- **React 19**
+  • A library for building dynamic user interfaces with components that update automatically when data changes.
 - **TypeScript**
-  - A superset of JavaScript that adds types (labels for data).
-  - Helps catch errors early during development and makes the code easier to maintain.
-- **CSS (globals.css & theme.css)**
-  - **globals.css** applies base styles (fonts, colors, resets) across the entire app.
-  - **dashboard/theme.css** defines the look and feel specific to the dashboard area.
-  - This separation keeps styles organized and avoids accidental style conflicts.
+  • Adds strict type checking (like grammar rules) so we catch errors while writing code, not in production.
+- **Tailwind CSS v4**
+  • A utility-first styling approach where we build designs by composing small, reusable classes.
+  • Speeds up styling and keeps a consistent look across the app.
+- **shadcn/ui**
+  • A set of ready-made, accessible UI components (buttons, forms, dialogs) built on Radix UI and styled with Tailwind.
+  • Developers can copy and customize these components directly to match any design.
+- **next-themes**
+  • Manages light, dark, or system-preference themes automatically.
+  • Integrates seamlessly into our layouts so users can switch themes with a click.
 
-By combining these tools, we have a clear structure (Next.js folders for pages and layouts), safer code (TypeScript), and flexible styling with vanilla CSS.
+Together, these frontend choices ensure a polished, responsive, and easily customizable user interface.
 
 ## 2. Backend Technologies
-The backend handles data, user accounts, and the logic behind the scenes. Our choices here are:
+These handle data storage, business logic, and user authentication behind the scenes:
 
 - **Next.js API Routes**
-  - Allows us to write server-side code (`route.ts` files) alongside our frontend in the same project.
-  - Runs on Node.js, so we can handle requests like sign-up, sign-in, and data fetching in one place.
-- **Node.js Runtime**
-  - The JavaScript environment on the server that executes our API routes.
-- **bcrypt** (npm package)
-  - A library for hashing passwords securely before storing them.
-  - Ensures that even if someone got access to our data, raw passwords aren’t visible.
-- **(Optional) NextAuth.js or JWT**
-  - While this starter kit shows a custom authentication flow, it can easily integrate services like NextAuth.js for email-based login or JWT (JSON Web Tokens) for stateless sessions.
+  • Built-in endpoints for handling server logic (sign-up, sign-in, data fetches).
+  • Keep backend code close to frontend code in a single project.
+- **Better Auth**
+  • A self-hosted authentication solution plugged into Next.js API routes.
+  • Manages sign-up, sign-in, session cookies, and secure password storage.
+- **Drizzle ORM**
+  • A type-safe database toolkit for writing SQL queries in TypeScript.
+  • Ensures compile-time checks against your actual database schema.
+- **PostgreSQL**
+  • A reliable, open-source relational database.
+  • Stores user accounts, sessions, and any future application data.
 
-These components work together to receive user credentials, verify or store them securely, manage sessions or tokens, and deliver protected data back to the frontend.
+These backend components work together so you can log in, stay logged in securely, and interact with data safely.
 
 ## 3. Infrastructure and Deployment
-Infrastructure covers where and how we host the app, as well as how changes get delivered:
+This covers how and where we run the application, and how we keep the code organized:
 
-- **Git & GitHub**
-  - Version control system (Git) and remote hosting (GitHub) keep track of all code changes and allow team collaboration.
-- **Vercel (or Netlify)**
-  - A popular hosting service optimized for Next.js, with one-click deployments and global content delivery.
-  - Automatically rebuilds and deploys the site whenever code is pushed to the main branch.
-- **GitHub Actions (CI/CD)**
-  - Automates tasks like linting (ESLint), formatting (Prettier), and running any tests you add.
-  - Ensures that only clean, tested code goes live.
+- **Docker for PostgreSQL**
+  • Provides a local database container that developers can spin up with one command.
+  • Ensures everyone works against the same environment.
+- **Vercel (Deployment)**
+  • A hosting platform optimized for Next.js that handles building and scaling automatically.
+  • Offers built-in previews for each code change, so you can review features before they go live.
+- **Version Control (Git/GitHub)**
+  • Tracks every change in code, making collaboration and rollback simple.
+- **ESLint & Prettier**
+  • Automatic code linting and formatting rules keep the codebase consistent and easy to read.
 
-Together, these tools provide a reliable, scalable setup where every code change is tested and deployed quickly, with minimal manual work.
+This setup makes onboarding new developers quick, and deployments predictable and repeatable.
 
 ## 4. Third-Party Integrations
-While this starter kit is minimal by design, it already includes or can easily add:
+These extra tools add functionality without reinventing the wheel:
 
-- **bcrypt**
-  - For secure password hashing (included as an npm dependency).
-- **NextAuth.js** (optional)
-  - A full-featured authentication library supporting email/password, OAuth, and more.
-- **Sentry or LogRocket** (optional)
-  - For real-time error tracking and performance monitoring in production.
+- **Radix UI (via shadcn/ui)**
+  • Provides unstyled, accessible building blocks (dialogs, tooltips) that we style with Tailwind.
+- **next-themes**
+  • Handles theme switching for light and dark modes.
+- **Better Auth**
+  • While self-hosted, it’s a packaged solution that integrates authentication flows without custom boilerplate.
 
-These integrations help extend the app’s capabilities without building every feature from scratch.
+By reusing these mature packages, we save time and reduce potential bugs.
 
 ## 5. Security and Performance Considerations
-We’ve baked in several measures to keep users safe and the app running smoothly:
+How we keep your data safe and the app fast:
 
-Security:
-- Passwords are never stored in plain text—bcrypt hashes them with a random salt.
-- API routes can implement CSRF protection and input validation to block malicious requests.
-- Session tokens or cookies are marked secure and HttpOnly to prevent theft via JavaScript.
+- **Authentication Security**
+  • Passwords are hashed and stored securely.
+  • Sessions are managed with HTTP-only cookies to prevent client-side tampering.
+- **Type Safety with TypeScript and Drizzle**
+  • Catch mismatches between code and database at compile time, reducing runtime errors.
+- **Server-Side Rendering (SSR) and Static Rendering**
+  • Next.js intelligently decides what to render on the server for SEO and what to render in the browser for interactivity.
+- **CSS Variables for Theming**
+  • Enables fast theme changes without heavy JavaScript.
+- **Linting and Formatting**
+  • ESLint flags potential security issues and code smells before deployment.
 
-Performance:
-- Server-side rendering (SSR) and static site generation (SSG) in Next.js deliver pages faster.
-- Code splitting and lazy-loaded components ensure users only download what they need.
-- Global CSS and theme files are small and cached by the browser for quick repeat visits.
-
-These strategies work together to give users a fast, secure experience every time.
+Performance optimizations like these help pages load quickly and behave reliably.
 
 ## 6. Conclusion and Overall Tech Stack Summary
-In building **codeguide-starter**, we chose technologies that:
+We chose a modern, full-stack setup that balances developer productivity, security, and user experience:
 
-- Align with modern web standards (Next.js, React, TypeScript).
-- Provide a clear, file-based project structure for rapid onboarding.
-- Offer built-in support for server-side rendering, API routes, and static assets.
-- Emphasize security through password hashing, session management, and safe defaults.
-- Enable easy scaling and future enhancements via modular code and optional integrations.
+- Frontend: Next.js, React, TypeScript, Tailwind CSS, shadcn/ui, next-themes
+- Backend: Next.js API Routes, Better Auth, Drizzle ORM, PostgreSQL
+- Infrastructure: Docker, Vercel, Git, ESLint, Prettier
+- Integrations: Radix UI, next-themes, Better Auth
 
-This stack strikes a balance between simplicity for newcomers and flexibility for experienced teams. It accelerates development of a secure authentication flow and a polished dashboard, while leaving room to plug in databases, test suites, and advanced features as the project grows.
+Unique Highlights:
+
+- **Type-Safe End-to-End:** From UI components to database queries, TypeScript ensures consistency.
+- **Component-Driven UI:** Ready-to-use, accessible components that speed up design work.
+- **Built-In Dark Mode:** Automatic and manual theme switching using CSS variables.
+- **Full-Stack in One Repo:** Frontend, backend, and database config live together for a smooth development experience.
+
+This stack provides a solid foundation for any web application, letting teams focus on features, not setup.
